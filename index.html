@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <!-- 
+        Creado por Alejandro Venegas Robles. 
+        En caso de incidencias, contactar con alejandro2196vr@gmail.com 
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador CDI - Medicina Interna</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Buscador CDI - Medicina Interna</h1>
+        <p class="subtitle">Herramienta de codificación CIE-10-ES y APR-GDR</p>
+    </header>
+
+    <main>
+        <div class="search-container">
+            <input type="text" id="searchInput"
+                placeholder="Escriba diagnóstico o procedimiento (ej: insuficiencia cardiaca)..." autofocus>
+        </div>
+
+        <div id="resultsContainer" class="results-container"></div>
+
+        <div id="errorLog" class="error-log" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <p>Creado por Alejandro Venegas Robles. En caso de incidencias, contactar con alejandro2196vr@gmail.com</p>
+    </footer>
+
+    <!-- Cargar datos primero -->
+    <script src="data.js?v=2.0"></script>
+    <!-- Cargar lógica de aplicación -->
+    <script src="app.js?v=2.0"></script>
+</body>
+
+</html>

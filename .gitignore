@@ -1,0 +1,13 @@
+# Carpeta Java (tiene su propio repositorio git)
+Buscador_Java/
+
+# Logs y outputs temporales
+verify_log.txt
+verify_output.txt
+
+# IDE
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc

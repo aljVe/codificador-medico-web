@@ -1,0 +1,195 @@
+/* 
+    Creado por Alejandro Venegas Robles. 
+    En caso de incidencias, contactar con alejandro2196vr@gmail.com 
+*/
+
+:root {
+    --primary-color: #0056b3;
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --border-color: #ddd;
+    --highlight-color: #e9ecef;
+    --error-color: #dc3545;
+    --success-color: #28a745;
+
+    /* New Variable */
+    --warning-bg: #fff3cd;
+    --warning-border: #ffc107;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 1.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.subtitle {
+    margin: 0.5rem 0 0;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+main {
+    flex: 1;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-container {
+    margin-bottom: 2rem;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+#searchInput:focus {
+    border-color: var(--primary-color);
+}
+
+.result-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* EXCLUDED CARD STYLE */
+.excluded-card {
+    border-left: 6px solid var(--warning-border);
+    background-color: #fffbef;
+    /* Very light yellow tint */
+}
+
+.result-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.alert-message {
+    background-color: var(--warning-bg);
+    color: #856404;
+    padding: 0.75rem;
+    border-radius: 4px;
+    border-left: 4px solid #ffeeba;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.decision-tree {
+    background-color: var(--secondary-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.decision-question {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-decision {
+    background-color: white;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-decision:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.final-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e8f5e9;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-text {
+    font-weight: 600;
+    color: #155724;
+}
+
+.btn-copy {
+    background-color: var(--success-color);
+    color: white;
+    margin-left: 1rem;
+}
+
+.btn-copy:hover {
+    background-color: #218838;
+}
+
+.error-log {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 1rem;
+    margin-top: 2rem;
+    border-radius: 4px;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #e9ecef;
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: auto;
+}
