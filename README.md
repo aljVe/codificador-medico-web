@@ -29,8 +29,4 @@ Abra el archivo `index.html` directamente en su navegador web (arránstrelo o ha
 | `update_csv.py` | Script para regenerar el CSV maestro |
 | `sync.py` | Sincroniza el CSV a `data.js` |
 
-## Autor
 
-**Alejandro Venegas Robles** — MIR Medicina Interna  
-Hospital Clínico Universitario Lozano Blesa, Zaragoza  
-alejandro2196vr@gmail.com
