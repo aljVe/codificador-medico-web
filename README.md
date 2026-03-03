@@ -10,6 +10,7 @@ Esta es la **versión web estática** de la herramienta, diseñada para funciona
 
 - **Búsqueda Inteligente (Fuzzy Search):** El motor de búsqueda es tolerante a errores tipográficos y completamente agnóstico al orden en que se escriben las palabras.
 - **Árboles de Decisión Dinámicos:** Las patologías y procedimientos complejos autogeneran botones interactivos de decisión (ej: *Diagnóstico vs. Terapéutico*, *Derecho vs. Izquierdo*) extraídos directamente de la normativa.
+- **Resolución de Código CIE-10 Exacta:** Al interactuar con los árboles de decisión, la herramienta ensambla y muestra en tiempo real el código CIE-10 final y exacto basado en las selecciones clínicas del usuario.
 - **Alertas Clínicas CDI:** Avisos críticos integrados para advertir al clínico sobre la necesidad de documentar apellidos diagnósticos que aumentan la severidad médica (ej: *Shock*, *Fracaso Renal Agudo*).
 - **Integración con Portapapeles (Clipboard API):** Copie el resultado final normativo con un solo clic para pegarlo directamente en el informe de alta o evolución del paciente de la historia clínica electrónica.
 - **Despliegue Cero:** No requiere servidor (localhost) ni Node.js. Es HTML, CSS y JavaScript puro.
@@ -31,9 +32,9 @@ El código está organizado de la siguiente manera para maximizar la mantenibili
 | `styles.css` | Diseño visual y responsivo de la interfaz. |
 | `data.js` | Base de datos precargada y pre-parseada. Contiene toda la lógica normativa. |
 | `base_datos_recalmin.csv` | El dataset maestro original que utilizan los médicos documentalistas. |
-| `sync.py` * | Script auxiliar para los desarrolladores. Convierte el `CSV` maestro hacia el formato nativo para `data.js`. |
+| `cie10es_builder.py` * | Herramienta automatizada en Python para descargar y buscar códigos oficiales en la DB SQLite del Ministerio y añadirlos fácilmente al dataset maestro. |
 
-*\* Los scripts de Python son herramientas exclusivas para mantenimiento; el clínico solo necesita el `index.html`.*
+*\* Los scripts de Python son herramientas exclusivas para el mantenimiento de la base de datos; el clínico solo necesita el `index.html`.*
 
 ---
 
