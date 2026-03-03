@@ -1,6 +1,6 @@
 /* 
  * Buscador CDI - Frontend Implementation
- * Author: Alejandro Venegas Robles (alejandro2196vr@gmail.com)
+ * // Creado por Alejandro Venegas Robles. En caso de incidencias, contactar con alejandro2196vr@gmail.com
  * 
  * Static fallback version of the application logic. 
  * Relies on `medicalData` array being globally available (e.g., loaded via data.js).
@@ -149,11 +149,27 @@ function renderResultCard(item, container) {
             card.appendChild(alertBox);
         }
 
+        if (item.code && item.code.trim() !== '' && item.type !== 'excluded') {
+            const codeBox = document.createElement('div');
+            codeBox.style.marginTop = '0.5rem';
+            codeBox.style.marginBottom = '0.5rem';
+            codeBox.style.fontWeight = 'bold';
+            codeBox.style.color = '#0056b3';
+            codeBox.style.backgroundColor = '#e8f4ff';
+            codeBox.style.padding = '0.5rem';
+            codeBox.style.borderRadius = '4px';
+            codeBox.style.borderLeft = '4px solid #0056b3';
+            codeBox.textContent = `CÓDIGO CIE-10: ${item.code}`;
+            card.appendChild(codeBox);
+        }
+
         const contentArea = document.createElement('div');
         contentArea.className = 'decision-tree';
         card.appendChild(contentArea);
 
         // Render appropriate UI component based on entity classification
+        const requiresTree = item.tree === true || item.type === 'tree' || item.type === 'tree_placeholder';
+
         if (item.type === 'excluded') {
             const excludedText = document.createElement('div');
             excludedText.style.color = '#856404';
@@ -161,10 +177,14 @@ function renderResultCard(item, container) {
             excludedText.style.marginTop = '1rem';
             excludedText.textContent = "[NO PRECISA CODIFICACIÓN]";
             contentArea.appendChild(excludedText);
-        } else if (item.type === 'simple' || item.type === 'tree_placeholder') {
-            renderFinalResult(item.value, contentArea);
-        } else if (item.type === 'tree') {
-            renderTreeStep(item.root, contentArea);
+        } else if (requiresTree) {
+            renderDynamicForm(item, contentArea);
+        } else {
+            let finalText = item.value || item.text;
+            if (item.code && item.code.trim() !== '') {
+                finalText += ` (CIE-10: ${item.code})`;
+            }
+            renderFinalResult(finalText, contentArea);
         }
 
         container.appendChild(card);
@@ -174,39 +194,155 @@ function renderResultCard(item, container) {
 }
 
 /**
- * Recursively renders decision tree nodes for complex diagnoses.
- * @param {Object} node Current tree node with question and options
+ * Generates a dynamic form evaluating brackets inside TEXTO_NORMATIVO.
+ * Replaces old renderTreeStep.
+ * @param {Object} item Data object
  * @param {HTMLElement} container Parent container
  */
-function renderTreeStep(node, container) {
+function renderDynamicForm(item, container) {
     try {
         container.innerHTML = '';
 
-        const question = document.createElement('span');
-        question.className = 'decision-question';
-        question.textContent = node.question;
-        container.appendChild(question);
+        // El texto paramétrico original
+        const baseText = item.value || item.text || '';
+        const regex = /\[(.*?)\]/g;
 
-        const btnGroup = document.createElement('div');
-        btnGroup.className = 'btn-group';
+        let match;
+        const matches = [];
 
-        node.options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'btn-decision';
-            btn.textContent = opt.label;
+        // Parse Regex para buscar corchetes
+        while ((match = regex.exec(baseText)) !== null) {
+            matches.push({
+                fullMatch: match[0],
+                inside: match[1]
+            });
+        }
 
-            btn.onclick = () => {
-                if (opt.value) {
-                    renderFinalResult(opt.value, container);
-                } else if (opt.next) {
-                    renderTreeStep(opt.next, container);
-                }
-            };
-            btnGroup.appendChild(btn);
+        const formContainer = document.createElement('div');
+        formContainer.className = 'dynamic-form';
+        formContainer.style.marginBottom = '15px';
+        formContainer.style.padding = '10px';
+        formContainer.style.backgroundColor = '#f8f9fa';
+        formContainer.style.border = '1px solid #dee2e6';
+        formContainer.style.borderRadius = '5px';
+
+        const controls = [];
+
+        // Generar componentes UI dinámicos
+        matches.forEach((m, index) => {
+            const controlWrapper = document.createElement('div');
+            controlWrapper.style.marginBottom = '10px';
+
+            const label = document.createElement('label');
+            label.textContent = `Campo ${index + 1}: `;
+            label.style.fontWeight = 'bold';
+            label.style.marginRight = '10px';
+            controlWrapper.appendChild(label);
+
+            let controlElement;
+
+            if (m.inside.includes('/')) {
+                // Genera Select si contiene '/'
+                controlElement = document.createElement('select');
+                controlElement.className = 'dynamic-select';
+                controlElement.style.padding = '5px';
+                controlElement.style.width = '100%';
+                controlElement.style.maxWidth = '300px';
+
+                const options = m.inside.split('/').map(o => o.trim());
+                options.forEach(opt => {
+                    const optionEl = document.createElement('option');
+                    optionEl.value = opt;
+                    optionEl.textContent = opt;
+                    controlElement.appendChild(optionEl);
+                });
+            } else {
+                // Genera Input si no contiene '/'
+                controlElement = document.createElement('input');
+                controlElement.type = 'text';
+                controlElement.className = 'dynamic-input';
+                controlElement.placeholder = m.inside;
+                controlElement.style.padding = '5px';
+                controlElement.style.width = '100%';
+                controlElement.style.maxWidth = '300px';
+            }
+
+            // Asignar listeners para actualizar la preview en tiempo real
+            controlElement.addEventListener('input', updatePreview);
+            controlElement.addEventListener('change', updatePreview);
+
+            controlWrapper.appendChild(controlElement);
+            formContainer.appendChild(controlWrapper);
+            controls.push(controlElement);
         });
-        container.appendChild(btnGroup);
+
+        container.appendChild(formContainer);
+
+        // Bloque de texto Preview que reemplaza corchetes
+        const previewHeader = document.createElement('div');
+        previewHeader.textContent = 'Preview del Diagnóstico:';
+        previewHeader.style.fontWeight = 'bold';
+        previewHeader.style.color = '#495057';
+        container.appendChild(previewHeader);
+
+        const previewContainer = document.createElement('p');
+        previewContainer.id = 'texto-preview';
+        previewContainer.style.fontStyle = 'italic';
+        previewContainer.style.fontSize = '1.1em';
+        previewContainer.style.marginBottom = '15px';
+        container.appendChild(previewContainer);
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'btn-copy';
+        copyBtn.innerHTML = '📋 Copiar para Informe';
+        copyBtn.onclick = () => copyToClipboard(previewContainer.textContent, copyBtn);
+        container.appendChild(copyBtn);
+
+        function updatePreview() {
+            let finalString = baseText;
+            let finalCode = item.code || '';
+
+            matches.forEach((m, i) => {
+                const ctrl = controls[i];
+                let val = ctrl.value;
+                if (!val || val.trim() === '') {
+                    val = `[${m.inside}]`; // Mantiene corchete como placeholder si está vacío
+                } else {
+                    if (finalCode) {
+                        const codeRegex = /\[(.*?)\]/g;
+                        let codeMatch;
+                        let newCode = finalCode;
+                        let replaced = false;
+                        while ((codeMatch = codeRegex.exec(finalCode)) !== null) {
+                            const fullBracket = codeMatch[0];
+                            const content = codeMatch[1];
+                            const mappings = content.split('|');
+                            for (let mapping of mappings) {
+                                const parts = mapping.split(':');
+                                if (parts.length === 2 && parts[0].trim() === val) {
+                                    newCode = newCode.replace(fullBracket, parts[1].trim());
+                                    replaced = true;
+                                    break;
+                                }
+                            }
+                            if (replaced) break;
+                        }
+                        finalCode = newCode;
+                    }
+                }
+                finalString = finalString.replace(m.fullMatch, val);
+            });
+            if (finalCode && finalCode.trim() !== '') {
+                finalString += ` (CIE-10: ${finalCode})`;
+            }
+            previewContainer.textContent = finalString;
+        }
+
+        // Ejecución inicial para llenar la vista previa
+        updatePreview();
+
     } catch (e) {
-        throw new Error(`renderTreeStep failed: ${e.message}`);
+        throw new Error(`renderDynamicForm failed: ${e.message}`);
     }
 }
 

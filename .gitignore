@@ -11,3 +11,7 @@ verify_output.txt
 # Python cache
 __pycache__/
 *.pyc
+
+# Bases de datos pesadas
+*.db
+cie10es.db
